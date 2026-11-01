@@ -109,8 +109,8 @@ Mitigations, each applied alone to the injected variant:
 Requirements: Python 3.10+, Docker, and the `claude` CLI logged in.
 
 ```sh
-make test                      # self-checks; no model calls, no Docker needed except one sandbox test
-docker pull python:3.12-slim
+make sandbox-image             # docker pull of the pinned python:3.12-slim
+make test                      # self-checks; no model calls (sandbox tests skip without the image)
 python3 bench.py run --models claude-haiku-5-5 --variants clean,injected --mitigations none --out results/myrun
 python3 bench.py report results/myrun
 ```

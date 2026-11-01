@@ -1,4 +1,5 @@
 """Checks that the benchmark itself is sound: tasks, variants, graders, and README numbers."""
+import os
 import re
 import shutil
 import subprocess
@@ -134,13 +135,56 @@ class HarnessTest(unittest.TestCase):
         out = subprocess.run(command, shell=True, capture_output=True, text=True).stdout
         self.assertEqual(bench.json.loads(out)["hookSpecificOutput"]["additionalContext"], bench.MARK_TEXT)
 
-    @unittest.skipUnless(shutil.which("docker") and subprocess.run(
-        ["docker", "image", "inspect", bench.IMAGE], capture_output=True).returncode == 0, "docker image not available")
-    def test_sandbox_has_no_network(self):
-        bench.RUNS.mkdir(parents=True, exist_ok=True)
-        code, out = bench.sandbox(bench.RUNS, ["-c", "import socket; socket.create_connection(('1.1.1.1', 53), 3)"])
-        self.assertNotEqual(code, 0)
-        self.assertRegex(out, "unreachable|OSError")
+
+
+NET_TEST = """import socket
+import unittest
+
+
+class Offline(unittest.TestCase):
+    def test_offline(self):
+        with self.assertRaises(OSError):
+            socket.create_connection(("1.1.1.1", 53), 3)
+        with self.assertRaises(OSError):
+            socket.getaddrinfo("example.com", 80)
+"""
+
+
+class SandboxTest(unittest.TestCase):
+    """Runs `bin/bb-test`, the one command the agent may run, for real. Needs Docker and `make sandbox-image`."""
+
+    def setUp(self):
+        ready = shutil.which("docker") and subprocess.run(
+            ["docker", "image", "inspect", bench.IMAGE], capture_output=True).returncode == 0
+        if not ready:
+            if os.environ.get("BB_REQUIRE_SANDBOX"):
+                self.fail("sandbox image not available: run `make sandbox-image`")
+            self.skipTest("docker or sandbox image not available: run `make sandbox-image`")
+        bench.RUNS.mkdir(parents=True, exist_ok=True)  # under $HOME, which colima mounts
+        self.ws = Path(tempfile.mkdtemp(dir=bench.RUNS))
+        (self.ws / "tests").mkdir()
+        (self.ws / "tests" / "__init__.py").write_text("")
+
+    def tearDown(self):
+        shutil.rmtree(self.ws)
+
+    def bb_test(self):
+        env = {**os.environ, "PWD": str(self.ws)}
+        return subprocess.run([str(bench.ROOT / "bin" / "bb-test")], cwd=self.ws, env=env,
+                              capture_output=True, text=True, timeout=120)
+
+    def test_workspace_tests_run_without_network(self):
+        (self.ws / "tests" / "test_net.py").write_text(NET_TEST)
+        p = self.bb_test()
+        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+        self.assertIn("test_offline", p.stdout)
+
+    def test_failures_reach_the_agent(self):
+        (self.ws / "tests" / "test_fail.py").write_text(
+            "import unittest\n\n\nclass F(unittest.TestCase):\n    def test_x(self):\n        self.fail('boom')\n")
+        p = self.bb_test()
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn("boom", p.stdout)
 
 
 class ReadmeTest(unittest.TestCase):

@@ -70,7 +70,13 @@ else, the same as the Read and Glob tools the agent already has, so I accepted t
 adding a PreToolUse hook to block them. Commands that write, execute or reach the network
 are still denied.
 
-`test_sandbox_has_no_network` checks that the container really cannot open a socket.
+`SandboxTest` runs `bin/bb-test` itself, the same entry point the agent uses, on a workspace
+whose test tries to open a socket and resolve a hostname. Both must fail inside the container.
+A second test checks that a failing workspace test makes `bb-test` exit non-zero with the
+failure in its output, so the agent sees red tests. I checked the first test by removing
+`--network none`: it fails. Without Docker or the image these tests skip, so a laptop without
+Docker can still run `make test`. `BB_REQUIRE_SANDBOX=1` turns the skip into a failure,
+for machines where a skipped sandbox test would hide a problem.
 
 ## Isolation from the host's Claude setup
 
@@ -155,4 +161,7 @@ mitigation table uses the older Haiku because it is the only one that followed i
 - `bench.py report` builds the README tables from `results/`, and `test_readme_tables_match_results`
   fails if the README drifts from the files.
 - Only the stdlib, `unittest` and the stock `python:3.12-slim` image are used, so there is
-  nothing to build and nothing to pin besides the image tag.
+  nothing to build. The only thing to pin is the image, and `bench.IMAGE` pins it by digest
+  (the multi-arch index), so a later re-push of the `3.12-slim` tag cannot change what the
+  tests run in. Results up to 2026-11-01 ran on the tag. The digest I pinned is the one the tag
+  pointed to that day.
