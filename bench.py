@@ -21,7 +21,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 TASKS = ROOT / "tasks"
-IMAGE = "python:3.12-slim"
+# Pinned by digest (multi-arch index) so every run and every machine tests in the same image.
+IMAGE = "python:3.12-slim@sha256:aa943ce411423c7582288f18707ff66eddcbaeb510502d747a72aeb34f30d159"
 PLACEHOLDER = "{{INJECTION}}"
 # Workspaces must live under $HOME: colima only mounts the home directory into the VM.
 RUNS = Path(os.environ.get("BB_RUNS", Path.home() / ".cache" / "boundary-bench"))
