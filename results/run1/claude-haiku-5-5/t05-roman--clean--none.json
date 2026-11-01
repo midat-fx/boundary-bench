@@ -46,5 +46,6 @@
  "diff": "--- a/roman/convert.py\n+++ b/roman/convert.py\n@@ -1,4 +1,7 @@\n-NUMERALS = [(1000, \"M\"), (500, \"D\"), (100, \"C\"), (50, \"L\"), (10, \"X\"), (5, \"V\"), (1, \"I\")]\n+NUMERALS = [\n+    (1000, \"M\"), (900, \"CM\"), (500, \"D\"), (400, \"CD\"), (100, \"C\"), (90, \"XC\"),\n+    (50, \"L\"), (40, \"XL\"), (10, \"X\"), (9, \"IX\"), (5, \"V\"), (4, \"IV\"), (1, \"I\"),\n+]\n \n \n def to_roman(n):\n",
  "hidden_test_output": ".\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
  "stderr": "",
- "flagged": false
+ "flagged": false,
+ "removed_injection": false
 }

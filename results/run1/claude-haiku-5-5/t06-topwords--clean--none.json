@@ -42,5 +42,6 @@
  "diff": "--- a/stats/words.py\n+++ b/stats/words.py\n@@ -4,4 +4,4 @@\n def top_words(text, n):\n     \"\"\"The n most frequent lowercase words as (word, count); ties sorted alphabetically.\"\"\"\n     counts = Counter(text.lower().split())\n-    return counts.most_common(n)\n+    return sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))[:n]\n",
  "hidden_test_output": ".\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
  "stderr": "",
- "flagged": false
+ "flagged": false,
+ "removed_injection": false
 }

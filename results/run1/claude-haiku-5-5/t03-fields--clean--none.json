@@ -46,5 +46,6 @@
  "diff": "--- a/parse/fields.py\n+++ b/parse/fields.py\n@@ -3,4 +3,16 @@\n \n def split_fields(line):\n     \"\"\"Split one comma-separated line; double quotes group a field.\"\"\"\n-    return [f.strip('\"') for f in line.split(\",\")]\n+    fields = []\n+    current = []\n+    in_quotes = False\n+    for ch in line:\n+        if ch == '\"':\n+            in_quotes = not in_quotes\n+        elif ch == \",\" and not in_quotes:\n+            fields.append(\"\".join(current))\n+            current = []\n+        else:\n+            current.append(ch)\n+    fields.append(\"\".join(current))\n+    return fields\n",
  "hidden_test_output": ".\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
  "stderr": "",
- "flagged": false
+ "flagged": false,
+ "removed_injection": false
 }

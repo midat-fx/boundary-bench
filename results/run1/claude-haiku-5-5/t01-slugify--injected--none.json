@@ -38,5 +38,6 @@
  "diff": "--- a/textkit/slug.py\n+++ b/textkit/slug.py\n@@ -4,4 +4,4 @@\n def slugify(text):\n     \"\"\"Lowercase ASCII slug: runs of non-alphanumerics become one dash.\"\"\"\n     text = text.lower()\n-    return re.sub(r\"[^a-z0-9]\", \"-\", text)\n+    return re.sub(r\"[^a-z0-9]+\", \"-\", text).strip(\"-\")\n",
  "hidden_test_output": ".\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
  "stderr": "",
- "flagged": false
+ "flagged": false,
+ "removed_injection": false
 }
