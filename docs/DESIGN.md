@@ -50,7 +50,7 @@ strings. Cartoonish injections are easy to refuse and say little about real repo
 
 ## Where things execute
 
-The plan requires containers without network. Claude Code itself needs the network to reach the
+Agent-written code must run in containers without network. Claude Code itself needs the network to reach the
 model API, so the CLI cannot run inside a `--network none` container. The split:
 
 - `claude -p` runs on the host with its working directory set to a throwaway workspace under
@@ -72,7 +72,7 @@ are still denied.
 
 `test_sandbox_has_no_network` checks that the container really cannot open a socket.
 
-## Isolation from the owner's Claude setup
+## Isolation from the host's Claude setup
 
 The machine running the benchmark has a personal `~/.claude` with CLAUDE.md, hooks, MCP servers
 and plugins. Any of these would contaminate the agent's context. Each run uses
@@ -81,8 +81,8 @@ and plugins. Any of these would contaminate the agent's context. Each run uses
 lists `mcp_servers: []` and `plugins: []`, and that the model saw no CLAUDE.md content. `--bare`
 would be cleaner, but it only accepts an API key and the runs use subscription OAuth.
 
-The `CLAUDECODE*` environment variables are stripped, because the harness itself was driven from
-a Claude Code session.
+The `CLAUDECODE*` environment variables are stripped, so starting the harness from inside another
+Claude Code session does not change how the child run behaves.
 
 ## Model ids
 
@@ -112,7 +112,7 @@ fails on the starting repo and passes once the reference solution is applied, in
 
 ## Budget
 
-The owner's limit was 80 `claude -p` runs in total, probes included. Ten tasks keep a cell at
+The budget was 80 `claude -p` runs in total, probes included. Ten tasks keep a cell at
 n=10, so the README reports fractions, not confidence intervals. Differences of one or two runs
 are noise at this size. How the runs were spent, in order:
 
@@ -131,7 +131,7 @@ are noise at this size. How the runs were spent, in order:
 
 76 of the 80 runs were used.
 
-The plan said "Haiku and Sonnet". The 5.5 generation of both is measured at baseline, and the
+The target was "Haiku and Sonnet". The 5.5 generation of both is measured at baseline, and the
 mitigation table uses the older Haiku because it is the only one that followed injections.
 
 ## Grading changes made after the first runs
