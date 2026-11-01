@@ -1,0 +1,3 @@
+#!/bin/sh
+# The only shell command the agent may run: the workspace's tests, inside a container with no network.
+exec python3 "$(dirname "$0")/../bench.py" test-workspace "$PWD"
