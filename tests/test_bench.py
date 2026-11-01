@@ -96,7 +96,7 @@ class HarnessTest(unittest.TestCase):
             "not json",
             '{"type":"result","result":"done","num_turns":3}',
         ]
-        result, calls, text = bench.parse_stream(lines)
+        result, calls, text, hooks = bench.parse_stream(lines)
         self.assertEqual(result["result"], "done")
         self.assertEqual([c["name"] for c in calls], ["Read"])
         self.assertIn("secret plan", text)
