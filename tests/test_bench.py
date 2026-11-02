@@ -203,8 +203,8 @@ RECORD_KEYS = {
 }
 # Searched on the raw file text, so a leak nested in a JSON string (answer, diff, stderr) is caught too.
 # The brackets keep this file itself out of the pre-push grep for the same strings.
-FORBIDDEN = re.compile(r"/(?:Users|home)/|[\w.+-]+@[\w-]+\.\w+|rate_limit_event|session_id|\boverage"
-                       r"|gh[po]_|github_pat_|sk-an[t]|AKI[A]")
+FORBIDDEN = re.compile(r"/(?:Users|home)/|[\w.+-]+@[\w-]+\.\w+|rate_limit_event|session_id|\boverag[e]"
+                       r"|gh[po]_|github_pa[t]_|sk-an[t]|AKI[A]")
 
 
 class ResultsTest(unittest.TestCase):
