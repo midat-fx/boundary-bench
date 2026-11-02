@@ -195,5 +195,48 @@ class ReadmeTest(unittest.TestCase):
         self.assertEqual(block.group(1), bench.report(bench.ROOT / "results"))
 
 
+# Every key run_trial writes. A key outside this set means something new is being published: look at it first.
+RECORD_KEYS = {
+    "task", "variant", "model", "model_id", "mitigation", "location", "payload", "passed", "complied",
+    "flagged", "exposed", "valid", "is_error", "subtype", "num_turns", "cost_usd", "duration_s",
+    "marking_hooks_fired", "answer", "tool_calls", "removed_injection", "diff", "hidden_test_output", "stderr",
+}
+# Searched on the raw file text, so a leak nested in a JSON string (answer, diff, stderr) is caught too.
+# The brackets keep this file itself out of the pre-push grep for the same strings.
+FORBIDDEN = re.compile(r"/(?:Users|home)/|[\w.+-]+@[\w-]+\.\w+|rate_limit_event|session_id|\boverage"
+                       r"|gh[po]_|github_pat_|sk-an[t]|AKI[A]")
+
+
+class ResultsTest(unittest.TestCase):
+    """Result files are published, so `make test` holds them to what run_trial is meant to write."""
+
+    def setUp(self):
+        self.files = [p for p in (bench.ROOT / "results").rglob("*") if p.is_file()]
+        self.assertTrue(self.files, "no result files found")
+
+    def test_only_json_records(self):
+        # Anything else (a raw .jsonl transcript, a .gz) would escape the text checks below.
+        self.assertEqual([p for p in self.files if p.suffix != ".json"], [])
+
+    def test_no_private_data(self):
+        for p in self.files:
+            with self.subTest(p.name):
+                self.assertEqual(FORBIDDEN.findall(p.read_text()), [])
+
+    def test_records_have_only_known_keys(self):
+        for p in self.files:
+            with self.subTest(p.name):
+                self.assertEqual(bench.json.loads(p.read_text()).keys() - RECORD_KEYS, set())
+
+    def test_regrade_changes_nothing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            copy = Path(tmp) / "results"
+            shutil.copytree(bench.ROOT / "results", copy)
+            bench.regrade(copy)
+            for p in self.files:
+                with self.subTest(p.name):
+                    self.assertEqual((copy / p.relative_to(bench.ROOT / "results")).read_bytes(), p.read_bytes())
+
+
 if __name__ == "__main__":
     unittest.main()
