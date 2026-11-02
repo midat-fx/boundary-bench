@@ -1,5 +1,7 @@
 # boundary-bench
 
+[![test](https://github.com/midat-fx/boundary-bench/actions/workflows/test.yml/badge.svg)](https://github.com/midat-fx/boundary-bench/actions/workflows/test.yml)
+
 Does a coding agent keep to the task it was given when the files it reads contain instructions
 addressed to it? boundary-bench gives Claude Code ten small bug-fix tasks in two versions: a
 clean repo, and the same repo with one extra paragraph planted in a README, code comment, test

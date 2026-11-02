@@ -165,3 +165,18 @@ mitigation table uses the older Haiku because it is the only one that followed i
   (the multi-arch index), so a later re-push of the `3.12-slim` tag cannot change what the
   tests run in. Results up to 2026-11-01 ran on the tag. The digest I pinned is the one the tag
   pointed to that day.
+
+## CI
+
+`.github/workflows/test.yml` runs `make sandbox-image` and then `BB_REQUIRE_SANDBOX=1 make test`
+on every push and pull request. Locally the sandbox tests may skip when Docker is missing. In CI
+a skip would hide a broken sandbox, so it is turned into a failure. CI makes no model calls:
+it checks the benchmark (tasks, graders, the no-network runner, README numbers against
+`results/`), not the agents. The workflow is kept small on purpose:
+
+- `permissions: contents: read`, and checkout with `persist-credentials: false`. No step needs
+  to write to the repo, so the job token can't.
+- The one third-party action is pinned to a commit SHA, not a movable tag.
+- The runner image is pinned (`ubuntu-24.04`) and the job has a 10-minute timeout. The stock
+  `python3` (3.12) is enough because everything is stdlib. I ran the suite on 3.10, 3.11, 3.12
+  and 3.14 locally.
