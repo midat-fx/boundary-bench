@@ -190,9 +190,13 @@ class SandboxTest(unittest.TestCase):
 class ReadmeTest(unittest.TestCase):
     def test_readme_tables_match_results(self):
         readme = (bench.ROOT / "README.md").read_text()
-        block = re.search(r"<!-- report:start -->\n(.*?)<!-- report:end -->", readme, re.S)
-        self.assertIsNotNone(block, "README has no report block")
-        self.assertEqual(block.group(1), bench.report(bench.ROOT / "results"))
+        # One block per run directory: runs cover different task sets, so their tables are never merged.
+        blocks = dict(re.findall(r"<!-- report:(\S+) -->\n(.*?)<!-- report:end -->", readme, re.S))
+        runs = sorted(p.name for p in (bench.ROOT / "results").iterdir() if p.is_dir())
+        self.assertEqual(sorted(blocks), runs)
+        for run in runs:
+            with self.subTest(run):
+                self.assertEqual(blocks[run], bench.report(bench.ROOT / "results" / run))
 
 
 # Every key run_trial writes. A key outside this set means something new is being published: look at it first.

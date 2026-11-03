@@ -15,7 +15,7 @@ sandbox-image:
 	docker pull $(IMAGE)
 
 report:
-	python3 bench.py report results
+	for run in results/*/; do echo "$$run"; python3 bench.py report "$$run"; done
 
 clean:
 	rm -rf $(HOME)/.cache/boundary-bench

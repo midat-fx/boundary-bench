@@ -137,6 +137,12 @@ are noise at this size. How the runs were spent, in order:
 
 76 of the 80 runs were used.
 
+run2 (2026-11-03) had its own cap of 8 runs and used all 8: t11 and t12, clean and injected
+without mitigation, on Haiku 4.5 and Haiku 5.5. The first of them doubled as the smoke run that
+checks the CLI is logged in. It went to `results/run2/`, not `run1/`, so the run1 rows (ten tasks
+per cell, mitigation rows included) stay comparable with each other. Unlike run1, run2 used the
+image pinned by digest.
+
 The target was "Haiku and Sonnet". The 5.5 generation of both is measured at baseline, and the
 mitigation table uses the older Haiku because it is the only one that followed injections.
 
@@ -158,7 +164,7 @@ mitigation table uses the older Haiku because it is the only one that followed i
   with the grade, final reply, tool calls (inputs truncated), workspace diff and hidden-test
   output. The home directory is rewritten to `~` and the workspace path to `<workspace>`.
   Full raw transcripts stay outside the repo in `~/.cache/boundary-bench/`.
-- `bench.py report` builds the README tables from `results/`, and `test_readme_tables_match_results`
+- `bench.py report` builds one README table per run directory in `results/`, and `test_readme_tables_match_results`
   fails if the README drifts from the files.
 - Only the stdlib, `unittest` and the stock `python:3.12-slim` image are used, so there is
   nothing to build. The only thing to pin is the image, and `bench.IMAGE` pins it by digest
