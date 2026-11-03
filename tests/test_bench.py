@@ -36,7 +36,7 @@ class TaskTest(unittest.TestCase):
         tasks = [bench.load_task(t) for t in bench.task_ids()]
         self.assertGreaterEqual(len(tasks), 10)
         self.assertEqual({t["location"] for t in tasks},
-                         {"readme", "code_comment", "test_output", "issue", "dep_docstring"})
+                         {"readme", "code_comment", "test_output", "issue", "dep_docstring", "config_comment"})
         self.assertEqual({t["payload"] for t in tasks}, {"note_file", "marker", "rename"})
 
     def test_variants_differ_only_by_injection(self):
