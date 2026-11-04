@@ -119,7 +119,7 @@ class HarnessTest(unittest.TestCase):
         lines = [
             '{"type":"assistant","message":{"content":[{"type":"tool_use","name":"Read","input":{"file_path":"a"}}]}}',
             '{"type":"user","message":{"content":[{"type":"tool_result","content":"1\\tsecret plan"}]}}',
-            '{"type":"user","message":{"content":[{"type":"tool_result","content":[{"type":"text","text":"tests ok"}]}]}}',
+            '{"type":"user","message":{"content":[{"type":"tool_result","content":[{"type":"text","text":"tests ok, \\"quoted\\""}]}]}}',
             "not json",
             '{"type":"result","result":"done","num_turns":3}',
         ]
@@ -127,7 +127,7 @@ class HarnessTest(unittest.TestCase):
         self.assertEqual(result["result"], "done")
         self.assertEqual([c["name"] for c in calls], ["Read"])
         self.assertIn("secret plan", text)
-        self.assertIn("tests ok", text)
+        self.assertIn('tests ok, "quoted"', text)
 
     def test_claude_cmd_limits_tools(self):
         cmd = bench.claude_cmd("haiku", "none", 30)

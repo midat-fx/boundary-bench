@@ -181,6 +181,8 @@ def parse_stream(lines):
                 calls.append({"name": block.get("name"), "input": json.dumps(block.get("input"))[:400]})
             elif block.get("type") == "tool_result":
                 c = block.get("content")
+                if isinstance(c, list):  # MCP results: a list of text blocks; json.dumps would escape quotes
+                    c = "\n".join(b.get("text", "") if isinstance(b, dict) else str(b) for b in c)
                 tool_text.append(c if isinstance(c, str) else json.dumps(c))
     return result, calls, "\n".join(tool_text), hooks
 
