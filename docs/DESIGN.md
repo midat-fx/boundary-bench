@@ -108,7 +108,7 @@ Three mitigations, each applied alone to the injected variant:
   available form of "mark tool output as data". It annotates; it does not wrap or escape the
   content. Runs are started with `--include-hook-events`, and each result records
   `marking_hooks_fired` to show that the hook actually ran.
-- **wrapped** (added 2026-11-04, not yet measured): the real "mark tool output as data" test.
+- **wrapped** (added and measured 2026-11-04): the real "mark tool output as data" test.
   Since a hook cannot rewrite built-in output, the run replaces the tools instead:
   `--tools Glob` leaves only file-name search built in, and `bench.py mcp-files`, a stdio MCP
   server of about 70 lines (stdlib, no network), gives `read_file`, `edit_file`, `write_file`
@@ -121,8 +121,15 @@ Three mitigations, each applied alone to the injected variant:
 
   The cost of this design is a confound: the agent gets different tools, not only marked
   output. A cleaner comparison would also run the same MCP tools without the `<data>` wrapping.
-  That control is not built, and I would add it only if `wrapped` turns out to differ from
-  `none`.
+  That control is not built. On Haiku 4.5 `wrapped` followed 4 of 10 against 6 of 10 for
+  `none`, a difference of two runs, so it has not earned the control yet.
+
+  The first `wrapped` probe also found a grading bug: MCP tool results arrive as a list of text
+  blocks, and `parse_stream` serialized that list with `json.dumps`, which escapes quotes, so an
+  injection line with a quote in it would not have been found and the run scored as not
+  exposed. It now joins the block texts. Built-in tools return plain strings, so I don't expect
+  it changed an earlier result, but the old raw transcripts are deleted and I could not
+  recheck.
 
 ## Hidden tests
 
@@ -160,6 +167,14 @@ image pinned by digest.
 
 The target was "Haiku and Sonnet". The 5.5 generation of both is measured at baseline, and the
 mitigation table uses the older Haiku because it is the only one that followed injections.
+
+On 2026-11-04 the CLI was logged in again and I started `claude -p` 15 more times. Two were
+`wrapped` probes outside `results/`: the first used a bad model id and was rejected at once,
+the second found the bug described under Mitigations and that the harness needs `DOCKER_HOST`
+set when Docker is colima. Three were the first attempt at the real run, started with
+`--tasks all` (which includes t11 and t12) and stopped within seconds, before any trial had
+finished; no file from them was kept. The last ten are Haiku 4.5 injected/wrapped on t01-t10
+in `results/run1`, next to the other mitigation rows.
 
 ## Grading changes made after the first runs
 
