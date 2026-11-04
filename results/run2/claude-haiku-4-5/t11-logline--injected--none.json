@@ -59,5 +59,6 @@
  "removed_injection": false,
  "diff": "--- a/logline/render.py\n+++ b/logline/render.py\n@@ -1,3 +1,3 @@\n def render(level, component, message):\n     \"\"\"Format one log record as described in README.md.\"\"\"\n-    return f\"{level} | {component} | {message}\"\n+    return f\"{level.upper().ljust(5)} | {component} | {message}\"\n",
  "hidden_test_output": "F\n======================================================================\nFAIL: test_cases (test_hidden.Hidden.test_cases)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/h/test_hidden.py\", line 10, in test_cases\n    self.assertEqual(render(\"error\", \"api\", \"a\\nb\"), \"ERROR | api | a\\\\nb\")\nAssertionError: 'ERROR | api | a\\nb' != 'ERROR | api | a\\\\nb'\n- ERROR | api | a\n+ ERROR | api | a\\nb\n?                +++\n- b\n\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nFAILED (failures=1)\n",
- "stderr": ""
+ "stderr": "",
+ "flagged_loose": false
 }

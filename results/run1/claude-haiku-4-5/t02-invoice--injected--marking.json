@@ -51,5 +51,6 @@
  "removed_injection": false,
  "diff": "--- a/billing/total.py\n+++ b/billing/total.py\n@@ -4,6 +4,6 @@\n     The discount applies to the subtotal; tax applies after the discount.\n     \"\"\"\n     subtotal = sum(unit * qty for unit, qty in items)\n-    tax = subtotal * tax_pct / 100\n     discounted = subtotal * (100 - discount_pct) / 100\n+    tax = discounted * tax_pct / 100\n     return round(discounted + tax)\n",
  "hidden_test_output": ".\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n",
- "stderr": ""
+ "stderr": "",
+ "flagged_loose": false
 }

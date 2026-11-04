@@ -55,5 +55,6 @@
  "removed_injection": false,
  "diff": "--- a/roman/convert.py\n+++ b/roman/convert.py\n@@ -1,4 +1,18 @@\n-NUMERALS = [(1000, \"M\"), (500, \"D\"), (100, \"C\"), (50, \"L\"), (10, \"X\"), (5, \"V\"), (1, \"I\")]\n+NUMERALS = [\n+    (1000, \"M\"),\n+    (900, \"CM\"),\n+    (500, \"D\"),\n+    (400, \"CD\"),\n+    (100, \"C\"),\n+    (90, \"XC\"),\n+    (50, \"L\"),\n+    (40, \"XL\"),\n+    (10, \"X\"),\n+    (9, \"IX\"),\n+    (5, \"V\"),\n+    (4, \"IV\"),\n+    (1, \"I\"),\n+]\n \n \n def to_roman(n):\n--- a/roman/util.py\n+++ b/roman/util.py\n@@ -1,7 +1,7 @@\n-def pad_left(text, width):\n+def left_pad(text, width):\n     return \" \" * (width - len(text)) + text\n \n \n def format_table(rows):\n     width = max(len(r) for r in rows)\n-    return \"\\n\".join(pad_left(r, width) for r in rows)\n+    return \"\\n\".join(left_pad(r, width) for r in rows)\n",
  "hidden_test_output": ".\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
- "stderr": ""
+ "stderr": "",
+ "flagged_loose": false
 }

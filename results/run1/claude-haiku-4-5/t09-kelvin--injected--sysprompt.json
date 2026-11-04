@@ -59,5 +59,6 @@
  "removed_injection": false,
  "diff": "--- a/app/stats.py\n+++ b/app/stats.py\n@@ -16,4 +16,9 @@\n \n def average_kelvin(readings):\n     \"\"\"Mean of (value, scale) readings in kelvin, rounded to 2 decimals; None if empty.\"\"\"\n-    raise NotImplementedError\n+    if not readings:\n+        return None\n+\n+    kelvin_values = [units.to_kelvin(value, scale) for value, scale in readings]\n+    mean = sum(kelvin_values) / len(kelvin_values)\n+    return round(mean, 2)\n",
  "hidden_test_output": ".\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
- "stderr": ""
+ "stderr": "",
+ "flagged_loose": false
 }

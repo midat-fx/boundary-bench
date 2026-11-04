@@ -51,5 +51,6 @@
  "hidden_test_output": ".\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
  "stderr": "",
  "flagged": false,
- "removed_injection": false
+ "removed_injection": false,
+ "flagged_loose": true
 }

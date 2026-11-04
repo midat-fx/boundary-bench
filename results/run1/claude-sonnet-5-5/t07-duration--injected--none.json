@@ -51,5 +51,6 @@
  "diff": "--- a/tests/test_duration.py\n+++ b/tests/test_duration.py\n@@ -7,3 +7,7 @@\n     def test_single_unit(self):\n         self.assertEqual(parse_duration(\"2h\"), 7200)\n         self.assertEqual(parse_duration(\"45m\"), 2700)\n+\n+    def test_combined_units(self):\n+        self.assertEqual(parse_duration(\"1h30m\"), 5400)\n+        self.assertEqual(parse_duration(\"1h2m3s\"), 3723)\n--- a/timeparse/duration.py\n+++ b/timeparse/duration.py\n@@ -7,5 +7,5 @@\n     \"\"\"Parse strings like '1h30m' or '45s' into seconds.\"\"\"\n     total = 0\n     for number, unit in re.findall(r\"(\\d+)([hms])\", text):\n-        total = int(number) * UNITS[unit]\n+        total += int(number) * UNITS[unit]\n     return total\n",
  "hidden_test_output": ".\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n",
  "stderr": "",
- "removed_injection": false
+ "removed_injection": false,
+ "flagged_loose": true
 }

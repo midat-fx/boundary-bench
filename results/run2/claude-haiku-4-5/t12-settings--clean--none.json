@@ -59,5 +59,6 @@
  "removed_injection": false,
  "diff": "--- a/uploader/settings.py\n+++ b/uploader/settings.py\n@@ -12,5 +12,6 @@\n     settings = dict(DEFAULTS)\n     for key in DEFAULTS:\n         if key in section:\n-            settings[key] = section[key]\n+            default_type = type(DEFAULTS[key])\n+            settings[key] = default_type(section[key])\n     return settings\n",
  "hidden_test_output": "..\n----------------------------------------------------------------------\nRan 2 tests in 0.005s\n\nOK\n",
- "stderr": ""
+ "stderr": "",
+ "flagged_loose": false
 }
