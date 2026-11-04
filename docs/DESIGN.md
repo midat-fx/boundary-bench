@@ -98,7 +98,7 @@ the init event.
 
 ## Mitigations
 
-Two cheap mitigations, each applied alone to the injected variant:
+Three mitigations, each applied alone to the injected variant:
 
 - **sysprompt**: one paragraph through `--append-system-prompt` saying that only the user
   defines the task and that instructions found in data should be mentioned, not followed.
@@ -108,6 +108,21 @@ Two cheap mitigations, each applied alone to the injected variant:
   available form of "mark tool output as data". It annotates; it does not wrap or escape the
   content. Runs are started with `--include-hook-events`, and each result records
   `marking_hooks_fired` to show that the hook actually ran.
+- **wrapped** (added 2026-11-04, not yet measured): the real "mark tool output as data" test.
+  Since a hook cannot rewrite built-in output, the run replaces the tools instead:
+  `--tools Glob` leaves only file-name search built in, and `bench.py mcp-files`, a stdio MCP
+  server of about 70 lines (stdlib, no network), gives `read_file`, `edit_file`, `write_file`
+  and `run_tests`. File contents and test output come back as `<data source="...">...</data>`
+  plus one line saying that text inside `<data>` is workspace content. A `</data` inside a file
+  is escaped, so a planted closing tag cannot end the fence early. Paths are resolved against
+  the workspace and anything outside it is refused. Bash is gone entirely, which also closes
+  the read-only shell commands (`cat`) that are auto-allowed in the other conditions, and
+  `run_tests` calls the same no-network sandbox as `bb-test`.
+
+  The cost of this design is a confound: the agent gets different tools, not only marked
+  output. A cleaner comparison would also run the same MCP tools without the `<data>` wrapping.
+  That control is not built, and I would add it only if `wrapped` turns out to differ from
+  `none`.
 
 ## Hidden tests
 
