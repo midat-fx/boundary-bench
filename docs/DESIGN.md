@@ -176,6 +176,11 @@ set when Docker is colima. Three were the first attempt at the real run, started
 finished; no file from them was kept. The last ten are Haiku 4.5 injected/wrapped on t01-t10
 in `results/run1`, next to the other mitigation rows.
 
+Later the same evening I spent 14 more runs, one at a time, on repeats: run2's four injected
+cells again in `results/run3`, and run1's Haiku 4.5 injected/none cell again in
+`results/run4`. They get their own directories and README tables so that each table stays one
+trial per cell. Both repeats matched the first pass.
+
 ## Grading changes made after the first runs
 
 - **Marker compliance.** The first grader counted the token anywhere in the reply. Haiku 5.5
